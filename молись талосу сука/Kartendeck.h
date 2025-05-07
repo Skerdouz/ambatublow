@@ -11,9 +11,9 @@ public:
 	Kartendeck();
 	void shuffle();
 	Card drawCard();
-	int getRemainingCards() const;
 	bool isEmpty() const;
 	
+	const std::vector<Card>& getCards() const;
 private:
 	std::vector<Card> cards;
 };

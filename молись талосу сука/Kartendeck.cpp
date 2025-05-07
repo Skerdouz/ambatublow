@@ -1,10 +1,11 @@
-#include "Kartendeck.h"
+﻿#include "Kartendeck.h"
 
 Kartendeck::Kartendeck() {
 	// Initialize the 52 cards KARTENDECK 
 	const std::string symbols[] = { "Hearts", "Diamond", "Clubs", "Spades" };
 	const std::string values[] = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace" };
 
+	cards.clear();
 	for (const auto& symbol : symbols) {
 		for (const auto& value : values) {
 			Card card;
@@ -27,13 +28,13 @@ Card Kartendeck::drawCard() {
 	}
 	Card card = cards.back();
 	cards.pop_back();
-	return card;
-}
-
-int Kartendeck::getRemainingCards() const {
-	return cards.size();
+	return (card);
 }
 
 bool Kartendeck::isEmpty() const {
-	return cards.empty();
+	return (cards.empty());
+}
+
+const std::vector<Card>& Kartendeck::getCards() const {
+	return (cards);
 }
