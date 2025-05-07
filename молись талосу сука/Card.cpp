@@ -1,12 +1,5 @@
 #include "Card.h"
 
-const std::string& Card::getColor() const {
-	return (color);
-}
-
-void Card::setColor(const std::string& color) {
-	Card::color = color;
-}
 
 const std::string& Card::getSymbol() const {
 	return (symbol);
