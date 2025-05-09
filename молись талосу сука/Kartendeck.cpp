@@ -1,7 +1,7 @@
 ﻿#include "Kartendeck.h"
 
 Kartendeck::Kartendeck() {
-	// Initialize the 52 cards KARTENDECK 
+	// init the 52 cards KARTENDECK 
 	const std::string symbols[] = { "Hearts", "Diamond", "Clubs", "Spades" };
 	const std::string values[] = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace" };
 
