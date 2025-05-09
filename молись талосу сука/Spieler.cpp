@@ -5,6 +5,14 @@ const std::vector<Card>& Spieler::getCards() const {
 	return (cards);
 }
 
+const std::string& Spieler::getName() const {
+	return (name);
+}
+
+void Spieler::setName(const std::string& name) {
+   Spieler::name = name;
+}
+
 void Spieler::addCard(const Card& card) {
     cards.push_back(card);
 }
