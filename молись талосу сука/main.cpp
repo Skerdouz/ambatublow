@@ -10,20 +10,30 @@ void printDeck(const Kartendeck& deck) {
 	}
 }
 
-void hitCard(Kartendeck* deck, Spieler* player) {
-	std::cout << "You are drawing a card..." << std::endl << std::endl;;
+void hitCard(Kartendeck* deck, Spieler* spieler) {
 	try {
 		Card drawnCard = deck->drawCard();
-		player->addCard(drawnCard);
-		std::cout << "You drew: " << drawnCard.getValue() << " of " << drawnCard.getSymbol() << std::endl;
-		std::cout << "You're at: " << player->getCardsValue() << std::endl << std::endl;;
+		spieler->addCard(drawnCard);
+		if (spieler->getName() == "Dealer" && spieler->getCards().size() == 2)
+			std::cout << "Dealer drew a card" << std::endl << std::endl;
+		else {
+			std::cout << spieler->getName() << " drew: " << drawnCard.getValue() << " of " << drawnCard.getSymbol() << std::endl;
+		}
 	}
 	catch (const std::out_of_range& e) {
 		std::cout << e.what() << std::endl;
 	}
 }
 
-void game_handle(Kartendeck* deck, Spieler* player) {
+void printValues(const Spieler* player, const Spieler* dealer, const bool final) {
+	if (final)
+		std::cout << std::endl << "Player: " << player->getCardsValue() << " | Dealer: " << dealer->getCardsValue() << std::endl;
+	else
+		std::cout << std::endl << "Player: " << player->getCardsValue() << " | Dealer: " << dealer->getCards().front().getValue() << std::endl;
+}
+
+void game_handle(Kartendeck* deck, Spieler* player, Spieler* dealer) {
+	// TODO: add dealer logic and SPLIT option
 	bool inGame = true;
 
 	while (inGame) {
@@ -34,8 +44,17 @@ void game_handle(Kartendeck* deck, Spieler* player) {
 			return;
 		}
 
-		while (player->getCards().size() < 2) {
+		if (player->getCards().size() < 2) {
 			hitCard(deck, player);
+			hitCard(deck, dealer);
+			hitCard(deck, player);
+			hitCard(deck, dealer);
+			printValues(player, dealer, false);
+		}
+
+		if (dealer->getCardsValue() == 21) {
+			std::cout << "Dealer got a BLACKJACK!" << std::endl;
+			return;
 		}
 
 		char choice;
@@ -45,6 +64,7 @@ void game_handle(Kartendeck* deck, Spieler* player) {
 
 		if (choice == 'H' || choice == 'h') {
 			hitCard(deck, player);
+			printValues(player, dealer, false);
 			if (player->getCardsValue() >= 21) {
 				if (player->getCardsValue() == 21)
 					std::cout << "You got a BLACKJACK!" << std::endl;
@@ -54,7 +74,25 @@ void game_handle(Kartendeck* deck, Spieler* player) {
 			}
 		}
 		else if (choice == 'S' || choice == 's') {
-			std::cout << "You are standing..." << std::endl;
+			std::cout << std::endl << "You are standing..." << std::endl;
+			while (dealer->getCardsValue() < 17) {
+				hitCard(deck, dealer);
+				printValues(player, dealer, true);
+				if (dealer->getCardsValue() >= 21) {
+					if (dealer->getCardsValue() == 21)
+						std::cout << "Dealer got a BLACKJACK!" << std::endl;
+					else
+						std::cout << "Dealer busted!" << std::endl;
+					return;
+				}
+			}
+			printValues(player, dealer, true);
+			if (dealer->getCardsValue() > player->getCardsValue())
+				std::cout << "Dealer won." << std::endl;
+			else if (dealer->getCardsValue() == player->getCardsValue())
+				std::cout << "It's a tie." << std::endl;
+			else
+				std::cout << "Player won!" << std::endl;
 			return;
 		}
 		else
@@ -66,11 +104,12 @@ int main() {
 	Kartendeck deck;
 	Spieler player;
 	Spieler dealer;
+	dealer.setName("Dealer");
+	player.setName("Player");
 
 	deck.shuffle();
 
-	game_handle(&deck, &player);
-	std::cout << "Your final value: " << player.getCardsValue() << std::endl;
+	game_handle(&deck, &player, &dealer);
 	return (0);
 }
 
