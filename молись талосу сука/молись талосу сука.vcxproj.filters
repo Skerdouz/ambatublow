@@ -24,12 +24,18 @@
     <ClCompile Include="Kartendeck.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Spieler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Card.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Kartendeck.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Spieler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
