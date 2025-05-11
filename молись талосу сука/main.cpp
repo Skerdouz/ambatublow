@@ -1,8 +1,14 @@
 ﻿// main.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
+#include <thread>
+#include <chrono>
 #include "Kartendeck.h"
 #include "Spieler.h"
+
+void eepy(unsigned int ms) {
+	std::this_thread::sleep_for(std::chrono::microseconds(ms));
+}
 
 void printDeck(const Kartendeck& deck) {
 	for (const auto& card : deck.getCards()) {
@@ -11,6 +17,7 @@ void printDeck(const Kartendeck& deck) {
 }
 
 void hitCard(Kartendeck* deck, Spieler* spieler) {
+	eepy(1000000); // simulate card draw delay OMG REALISM
 	try {
 		Card drawnCard = deck->drawCard();
 		spieler->addCard(drawnCard);
@@ -26,14 +33,30 @@ void hitCard(Kartendeck* deck, Spieler* spieler) {
 }
 
 void printValues(const Spieler* player, const Spieler* dealer, const bool final) {
-	if (final)
-		std::cout << std::endl << "Player: " << player->getCardsValue() << " | Dealer: " << dealer->getCardsValue() << std::endl;
+	if (final) {
+		std::cout << std::endl << std::endl << "-------FINAL RESULT-----" << std::endl;
+		std::cout << "Player: " << player->getCardsValue() << " | Dealer: " << dealer->getCardsValue();
+	}
+	else {
+		std::cout << std::endl << std::endl << "------------------------" << std::endl;
+		std::cout << "Player: " << player->getCardsValue() << " | Dealer: " << dealer->getCards().front().getValue();
+	}
+	std::cout << std::endl << "------------------------" << std::endl;
+}
+
+void printWinner(const Spieler* player, const Spieler* dealer) {
+	if ((player->getCardsValue() == dealer->getCardsValue()) && (player->getCardsValue() <= 21 && dealer->getCardsValue() <= 21)) {
+		std::cout << "It's a tie." << std::endl;
+	}
+	else if (player->getCardsValue() > 21 || (dealer->getCardsValue() > player->getCardsValue() && dealer->getCardsValue() <= 21))
+		std::cout << "Dealer won." << std::endl;
 	else
-		std::cout << std::endl << "Player: " << player->getCardsValue() << " | Dealer: " << dealer->getCards().front().getValue() << std::endl;
+		std::cout << "Player won!" << std::endl;
+	return;
 }
 
 void game_handle(Kartendeck* deck, Spieler* player, Spieler* dealer) {
-	// TODO: add dealer logic and SPLIT option
+	// TODO: add SPLIT option
 	bool inGame = true;
 
 	while (inGame) {
@@ -56,10 +79,16 @@ void game_handle(Kartendeck* deck, Spieler* player, Spieler* dealer) {
 			std::cout << "Dealer got a BLACKJACK!" << std::endl;
 			return;
 		}
+		if (player->getCardsValue() == 21) {
+			std::cout << "Player got a BLACKJACK!" << std::endl;
+			return;
+		}
 
 		char choice;
 
-		std::cout << "Would you like to: [H]it or [S]tand ?" << std::endl;
+		
+
+		std::cout << "Would you like to [H]it or [S]tand: ";
 		std::cin >> choice;
 
 		if (choice == 'H' || choice == 'h') {
@@ -70,6 +99,7 @@ void game_handle(Kartendeck* deck, Spieler* player, Spieler* dealer) {
 					std::cout << "You got a BLACKJACK!" << std::endl;
 				else 
 					std::cout << "You busted!" << std::endl;
+				printWinner(player, dealer);
 				return;
 			}
 		}
@@ -77,22 +107,16 @@ void game_handle(Kartendeck* deck, Spieler* player, Spieler* dealer) {
 			std::cout << std::endl << "You are standing..." << std::endl;
 			while (dealer->getCardsValue() < 17) {
 				hitCard(deck, dealer);
-				printValues(player, dealer, true);
+				printValues(player, dealer, false);
 				if (dealer->getCardsValue() >= 21) {
 					if (dealer->getCardsValue() == 21)
 						std::cout << "Dealer got a BLACKJACK!" << std::endl;
 					else
 						std::cout << "Dealer busted!" << std::endl;
-					return;
 				}
 			}
 			printValues(player, dealer, true);
-			if (dealer->getCardsValue() > player->getCardsValue())
-				std::cout << "Dealer won." << std::endl;
-			else if (dealer->getCardsValue() == player->getCardsValue())
-				std::cout << "It's a tie." << std::endl;
-			else
-				std::cout << "Player won!" << std::endl;
+			printWinner(player, dealer);
 			return;
 		}
 		else
