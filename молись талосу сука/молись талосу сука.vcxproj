@@ -127,12 +127,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Bank.cpp" />
     <ClCompile Include="Card.cpp" />
     <ClCompile Include="Kartendeck.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Spieler.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bank.h" />
     <ClInclude Include="Card.h" />
     <ClInclude Include="Kartendeck.h" />
     <ClInclude Include="Spieler.h" />
